@@ -19,6 +19,20 @@ db.sequelize = sequelize
 db.tramite = require("./tramite.model.js")(sequelize,Sequelize)
 db.categoria = require("./categoria.model")(sequelize,Sequelize)
 db.pregunta = require("./pregunta.model")(sequelize,Sequelize)
+db.usuario = require("./usuario.model")(sequelize,Sequelize)
+db.tipo = require("./tipo.model")(sequelize,Sequelize)
+
+db.tipo.belongsToMany(db.usuario,{
+    through : "usuarios_tipo",
+    foreignKey : "usuarios_codigo",
+    otherKey : "tipo_id"
+})
+db.usuario.belongsToMany(db.tipo,{
+    through : "usuarios_tipo",
+    foreignKey : "tipo_id",
+    otherKey : "usuarios_codigo"
+})
+
 db.categoria.hasMany(db.pregunta, {
     foreignKey : "categoria_id",
     as : "preguntas"
@@ -27,5 +41,9 @@ db.pregunta.belongsTo(db.categoria, {
     foreignKey : "categoria_id",
     as: "categoria"
 })
+
+db.TIPOS = ["coordinador","admin"]
+
+
 
 module.exports = db;
