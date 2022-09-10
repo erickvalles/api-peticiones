@@ -17,5 +17,15 @@ const db = {}
 db.Sequelize = Sequelize
 db.sequelize = sequelize
 db.tramite = require("./tramite.model.js")(sequelize,Sequelize)
+db.categoria = require("./categoria.model")(sequelize,Sequelize)
+db.pregunta = require("./pregunta.model")(sequelize,Sequelize)
+db.categoria.hasMany(db.pregunta, {
+    foreignKey : "categoria_id",
+    as : "preguntas"
+})
+db.pregunta.belongsTo(db.categoria, {
+    foreignKey : "categoria_id",
+    as: "categoria"
+})
 
 module.exports = db;

@@ -27,6 +27,9 @@ app.get('/', (req,res)=>{
 })
 
 require("./routes/tramite.routes")(app)
+require("./routes/categoria.routes")(app)
+require("./routes/pregunta.routes")(app)
+
 const PORT = process.env.PORT || 3000
 
 app.listen(PORT, ()=>{
