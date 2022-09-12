@@ -13,7 +13,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
 const Tipo = db.tipo
-db.sequelize.sync({force:true})
+/*db.sequelize.sync({force:true})
     .then(()=>{
         console.log("Base de datos sincronizada")
         inicializarTipos()
@@ -36,11 +36,13 @@ app.get('/', (req,res)=>{
     res.send({
         mensaje:"Es el index"
     })
-})
+})*/
 
 require("./routes/tramite.routes")(app)
 require("./routes/categoria.routes")(app)
 require("./routes/pregunta.routes")(app)
+require("./routes/auth.routes")(app)
+require("./routes/usuario.routes")(app)
 
 const PORT = process.env.PORT || 3000
 

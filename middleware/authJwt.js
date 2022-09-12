@@ -40,3 +40,27 @@ esAdmin = (req,res,next)=>{
         })
     })
 }
+
+esCoordi = (req,res,next)=>{
+    Usuario.findByPk(req.codigo).then(user=>{
+        usuario.getTipos().then(tipos =>{
+            for(let i=0; i<tipos.length;i++){
+                if(tipos[i].descripcion == "coordinador"){
+                    next()
+                    return
+                }
+            }
+            res.status(403).send({
+                mensaje: "Se requiere el rol de coordi"
+            })
+        })
+    })
+}
+
+const authJwt = {
+    verifyToken: verifyToken,
+    esAdmin:esAdmin,
+    esCoordi:esCoordi
+}
+
+module.exports = authJwt
