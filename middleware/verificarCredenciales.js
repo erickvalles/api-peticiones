@@ -20,8 +20,8 @@ checkUsuarioDuplicado = (req,res,next) =>{
 
 verificarTipo = (req,res,next)=>{
     if(req.body.tipos){
-        for(let i=0; i<req.body.tipos.length;i++){
-            if(!TIPOS.includes(req.body.tipos[i])){
+        for(let i=0; i<req.body.roles.length;i++){
+            if(!TIPOS.includes(req.body.roles[i])){
                 res.status(400).send({
                     menssaje:"El tipo no existe ="+req.body.tipos[i]
                 })

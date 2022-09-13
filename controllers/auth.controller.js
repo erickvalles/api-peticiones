@@ -8,6 +8,9 @@ var bcrypt = require('bcryptjs')
 const { USER } = require('../config/db.config')
 
 exports.unirse = (req, res) => {
+
+   
+    
     Usuario.create({
         codigo:req.body.codigo,
         nombre:req.body.nombre,
@@ -15,11 +18,11 @@ exports.unirse = (req, res) => {
         am:req.body.am,
         password:bcrypt.hashSync(req.body.password,8)
     }).then(user=>{
-        if(req.body.tipos){
+        if(req.body.roles){
             Tipo.findAll({
                 where: {
                     descripcion:{
-                        [Op.or]: req.body.tipos
+                        [Op.or]: req.body.roles
                     }
                 }
             }).then(tipos=>{

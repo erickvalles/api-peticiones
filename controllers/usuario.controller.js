@@ -19,5 +19,5 @@ exports.coordinadorContent = (req,res)=>{
 
 
 exports.adminContent = (req,res)=>{
-    res.status(200).send("Solamente coordis")
+    res.status(200).send("Solamente admins")
 }
