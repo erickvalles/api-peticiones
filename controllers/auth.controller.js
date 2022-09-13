@@ -8,71 +8,74 @@ var bcrypt = require('bcryptjs')
 const { USER } = require('../config/db.config')
 
 exports.unirse = (req, res) => {
+    res.send({
+        mensaje: req.body
+    })
     Usuario.create({
-        codigo:req.body.codigo,
-        nombre:req.body.nombre,
-        ap:req.body.ap,
-        am:req.body.am,
-        password:bcrypt.hashSync(req.body.password,8)
-    }).then(user=>{
-        if(req.body.tipos){
+        codigo: req.body.codigo,
+        nombre: req.body.nombre,
+        ap: req.body.ap,
+        am: req.body.am,
+        password: bcrypt.hashSync(req.body.password, 8)
+    }).then(user => {
+        if (req.body.tipos) {
             Tipo.findAll({
                 where: {
-                    descripcion:{
+                    descripcion: {
                         [Op.or]: req.body.tipos
                     }
                 }
-            }).then(tipos=>{
-                user.setTipos(tipos).then(()=>{
+            }).then(tipos => {
+                user.setTipos(tipos).then(() => {
                     res.send({
-                        mensaje:"Usuario registrado ok!"
+                        mensaje: "Usuario registrado ok!"
                     })
                 })
             })
-        }else{
-            user.setTipos([1]).then(()=>{
+        } else {
+            user.setTipos([1]).then(() => {
                 res.send({
-                    mensaje:"Usuario registrado ok!"
+                    mensaje: "Usuario registrado ok!"
                 })
             })
         }
-    }).catch(err=>{
+    }).catch(err => {
         res.status(500).send({
             mensaje: err.message
         })
     })
 }
 
-exports.login = (req,res)=>{
+exports.login = (req, res) => {
     Usuario.findOne({
-        where:{
-            codigo:req.body.codigo
+        where: {
+            codigo: req.body.codigo
         }
-    }).then(usuario=>{
-        if(!usuario){
-            return res.status(404).send({mensaje:"Usuario no encontrado!"})
+    }).then(usuario => {
+        if (!usuario) {
+            return res.status(404).send({ mensaje: "Usuario no encontrado!" })
         }
 
         var passwordValida = bcrypt.compareSync(
             req.body.password,
             usuario.password
         )
-        if(!passwordValida){
+        if (!passwordValida) {
             return res.status(401).send({
-                accessToken:null,
-                mensaje:"Contraseña incorrecta"
+                accessToken: null,
+                mensaje: "Contraseña incorrecta"
             })
         }
 
-        var token = jwt.sign({id:usuario.codigo},config.secret,{
-            expiresIn: 43200//12 horas
+        var token = jwt.sign({ id: usuario.codigo }, config.secret, {
+            expiresIn: 43200 //12 horas
         })
 
         var authorities = []
 
-        usuario.getTipos().then(tipos=>{
-            for (let i = 0; i<tipos.length; i++){
-                authorities.push("TIPO_"+tipos[i].descripcion.toUpperCase())
+        usuario.getTipos().then(tipos => {
+            for (let i = 0; i < tipos.length; i++) {
+                authorities.push("TIPO_" + tipos[i].descripcion.toUpperCase())
             }
 
             res.status(200).send({
@@ -82,7 +85,7 @@ exports.login = (req,res)=>{
                 accessToken: token
             })
         })
-    }).catch(err=>{
-        res.status(500).send({mensaje:err.message})
+    }).catch(err => {
+        res.status(500).send({ mensaje: err.message })
     })
 }

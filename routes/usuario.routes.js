@@ -1,8 +1,8 @@
-const {authJwt} = require("../middleware")
+const { authJwt } = require("../middleware")
 const controller = require("../controllers/usuario.controller")
 
-module.exports = function(app){
-    app.use(function(req, res, next){
+module.exports = function(app) {
+    app.use(function(req, res, next) {
         res.header(
             "Access-Control-Allow-Headers",
             "x-access-token, Origin, Content-Type, Accept"
@@ -10,13 +10,13 @@ module.exports = function(app){
         next()
     })
 
-    app.get("/api/test/all", controller.allAccess)
+    app.get("/api/all", controller.allAccess)
 
-    app.get("/api/test/coordi",[
+    app.get("/api/coordi", [
         authJwt.verifyToken, authJwt.esCoordi,
     ], controller.coordinadorContent)
 
-    app.get("/api/test/admin",[
+    app.get("/api/admin", [
         authJwt.verifyToken, authJwt.esAdmin
     ], controller.adminContent)
 
