@@ -8,9 +8,9 @@ var bcrypt = require('bcryptjs')
 const { USER } = require('../config/db.config')
 
 exports.unirse = (req, res) => {
-    res.send({
-        mensaje: req.body
-    })
+
+
+
     Usuario.create({
         codigo: req.body.codigo,
         nombre: req.body.nombre,

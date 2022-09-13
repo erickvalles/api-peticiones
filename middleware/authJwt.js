@@ -18,15 +18,15 @@ verifyToken = (req,res,next)=>{
                 mensaje:"No autorizado"
             })
         }
-        req.codigo = decoded.codigo
-
+        req.codigo = decoded.id
+        //console.log(decoded)
         next()
     })
 
 }
 
 esAdmin = (req,res,next)=>{
-    Usuario.findByPk(req.codigo).then(user=>{
+    Usuario.findByPk(req.codigo).then(usuario=>{
         usuario.getTipos().then(tipos =>{
             for(let i=0; i<tipos.length;i++){
                 if(tipos[i].descripcion == "admin"){
@@ -42,7 +42,7 @@ esAdmin = (req,res,next)=>{
 }
 
 esCoordi = (req,res,next)=>{
-    Usuario.findByPk(req.codigo).then(user=>{
+    Usuario.findByPk(req.codigo).then(usuario=>{
         usuario.getTipos().then(tipos =>{
             for(let i=0; i<tipos.length;i++){
                 if(tipos[i].descripcion == "coordinador"){
