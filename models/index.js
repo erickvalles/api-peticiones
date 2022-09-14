@@ -24,14 +24,14 @@ db.usuario = require("./usuario.model")(sequelize, Sequelize)
 
 db.tipo.belongsToMany(db.usuario, {
     through: "usuarios_tipo",
-    foreignKey: "usuarios_codigo",
-    otherKey: "tipo_id",
+    foreignKey: "tipo_id",
+    otherKey: "usuarios_codigo",
     as: "usuarios"
 })
 db.usuario.belongsToMany(db.tipo, {
     through: "usuarios_tipo",
-    foreignKey: "tipo_id",
-    otherKey: "usuarios_codigo",
+    foreignKey: "usuarios_codigo",
+    otherKey: "tipo_id",
     as: "tipos"
 })
 

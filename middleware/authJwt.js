@@ -4,32 +4,32 @@ const { usuario } = require("../models")
 const db = require("../models")
 const Usuario = db.usuario
 
-verifyToken = (req,res,next)=>{
+verifyToken = (req, res, next) => {
     let token = req.headers["x-access-token"]
-    if(!token){
+    if (!token) {
         return res.status(403).send({
-            mensaje:"No existe un token!"
+            mensaje: "No existe un token!"
         })
     }
 
-    jwt.verify(token, config.secret, (err,decoded)=>{
-        if(err){
+    jwt.verify(token, config.secret, (err, decoded) => {
+        if (err) {
             return res.status(401).send({
-                mensaje:"No autorizado"
+                mensaje: "No autorizado"
             })
         }
-        req.codigo = decoded.id
-        //console.log(decoded)
+        req.codigo = decoded.codigo
+        console.log(decoded)
         next()
     })
 
 }
 
-esAdmin = (req,res,next)=>{
-    Usuario.findByPk(req.codigo).then(usuario=>{
-        usuario.getTipos().then(tipos =>{
-            for(let i=0; i<tipos.length;i++){
-                if(tipos[i].descripcion == "admin"){
+esAdmin = (req, res, next) => {
+    Usuario.findByPk(req.codigo).then(usuario => {
+        usuario.getTipos().then(tipos => {
+            for (let i = 0; i < tipos.length; i++) {
+                if (tipos[i].descripcion == "admin") {
                     next()
                     return
                 }
@@ -41,17 +41,18 @@ esAdmin = (req,res,next)=>{
     })
 }
 
-esCoordi = (req,res,next)=>{
-    Usuario.findByPk(req.codigo).then(usuario=>{
-        usuario.getTipos().then(tipos =>{
-            for(let i=0; i<tipos.length;i++){
-                if(tipos[i].descripcion == "coordinador"){
+esCoordi = (req, res, next) => {
+    Usuario.findByPk(req.codigo).then(usuario => {
+        usuario.getTipos().then(tipos => {
+            for (let i = 0; i < tipos.length; i++) {
+                if (tipos[i].descripcion === "coordinador") {
                     next()
                     return
                 }
             }
+
             res.status(403).send({
-                mensaje: "Se requiere el rol de coordi"
+                mensaje: "Se requiere el rol del coordinador"
             })
         })
     })
@@ -59,8 +60,8 @@ esCoordi = (req,res,next)=>{
 
 const authJwt = {
     verifyToken: verifyToken,
-    esAdmin:esAdmin,
-    esCoordi:esCoordi
+    esAdmin: esAdmin,
+    esCoordi: esCoordi
 }
 
 module.exports = authJwt

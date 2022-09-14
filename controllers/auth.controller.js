@@ -1,47 +1,45 @@
-const db = require('../models')
-const config = require('../config/auth.config')
+const db = require("../models")
+const config = require("../config/auth.config")
 const Usuario = db.usuario
 const Tipo = db.tipo
+
 const Op = db.Sequelize.Op
-var jwt = require('jsonwebtoken')
-var bcrypt = require('bcryptjs')
-const { USER } = require('../config/db.config')
+
+var jwt = require("jsonwebtoken")
+var bcrypt = require("bcryptjs")
 
 exports.unirse = (req, res) => {
-
-
-
     Usuario.create({
         codigo: req.body.codigo,
         nombre: req.body.nombre,
         ap: req.body.ap,
         am: req.body.am,
         password: bcrypt.hashSync(req.body.password, 8)
-    }).then(user => {
-        if (req.body.tipos) {
+    }).then(usuario => {
+        if (req.body.roles) {
             Tipo.findAll({
                 where: {
                     descripcion: {
-                        [Op.or]: req.body.tipos
+                        [Op.or]: req.body.roles
                     }
                 }
             }).then(tipos => {
-                user.setTipos(tipos).then(() => {
+                usuario.setTipos(tipos).then(() => {
                     res.send({
-                        mensaje: "Usuario registrado ok!"
+                        mensaje: "Usuario creado exitosamente"
                     })
                 })
             })
         } else {
-            user.setTipos([1]).then(() => {
+            usuario.setTipos([1]).then(() => {
                 res.send({
-                    mensaje: "Usuario registrado ok!"
+                    mensaje: "Usuario creado exitosamente"
                 })
             })
         }
     }).catch(err => {
         res.status(500).send({
-            mensaje: err.message
+            mensaje: err.message || "Algo salió mal"
         })
     })
 }
@@ -53,25 +51,26 @@ exports.login = (req, res) => {
         }
     }).then(usuario => {
         if (!usuario) {
-            return res.status(404).send({ mensaje: "Usuario no encontrado!" })
+            res.status(401).send({
+                mensaje: "No se encuentra el usuario"
+            })
         }
 
-        var passwordValida = bcrypt.compareSync(
-            req.body.password,
-            usuario.password
-        )
-        if (!passwordValida) {
+        var passValida = bcrypt.compareSync(req.body.password, usuario.password)
+
+        console.log(passValida)
+        if (!passValida) {
             return res.status(401).send({
                 accessToken: null,
                 mensaje: "Contraseña incorrecta"
             })
         }
 
-        var token = jwt.sign({ id: usuario.codigo }, config.secret, {
-            expiresIn: 43200 //12 horas
+        var token = jwt.sign({ codigo: usuario.codigo }, config.secret, {
+            expiresIn: 43200 //12 horas 
         })
 
-        var authorities = []
+        var authorities = [];
 
         usuario.getTipos().then(tipos => {
             for (let i = 0; i < tipos.length; i++) {
@@ -79,9 +78,9 @@ exports.login = (req, res) => {
             }
 
             res.status(200).send({
-                id: usuario.codigo,
+                codigo: usuario.codigo,
                 nombre: usuario.nombre,
-                tipos: authorities,
+                roles: authorities,
                 accessToken: token
             })
         })

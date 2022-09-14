@@ -2,13 +2,8 @@ const db = require("../models")
 const Usuario = db.usuario
 
 exports.allAccess = (req, res) => {
-    Usuario.findAll({
-        attibutes: ["codigo", "nombre"],
-        include: ['tipos']
-    }).then(usuarios => {
-        usuarios.getTipo().then(tipos => {
-            res.status(200).send(tipos)
-        })
+    res.status(200).send({
+        mensaje: "contenido público"
     })
 
 }
